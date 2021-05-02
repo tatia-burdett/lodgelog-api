@@ -36,7 +36,7 @@ addressRouter
     for (const [key, value] of Object.entries(requiredFields)) {
       if (!value) {
         return res.status(400).json({
-          error: { message: `Missing ${key} in response body` }
+          error: { message: `Missing ${key} in request body` }
         })
       }
     }

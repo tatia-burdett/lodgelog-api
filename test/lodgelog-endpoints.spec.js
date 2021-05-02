@@ -135,5 +135,101 @@ describe('Address Endpoints', function() {
             .expect(res.body)
         })
     })
+
+    const requiredFields = ['from_date', 'street_address', 'city', 'abb_state', 'zipcode']
+
+    requiredFields.forEach(field => {
+      const newAddress = {
+        from_date: '2010-01-01T08:00:00.000Z',
+        street_address: '123 Test St',
+        city: 'Testville',
+        abb_state: 'KY',
+        zipcode: 12345
+      }
+
+      it(`responds with 400 and an error message when the ${field} is missing`, () => {
+        delete newAddress[field]
+
+        return supertest(app)
+          .post(`/api/address`)
+          .send(newAddress)
+          .expect(400, {
+            error: { message: `Missing ${field} in request body` }
+          })
+      })
+    })
+  })
+
+  describe(`DELETE /api/address/:id`, () => {
+    
+    context(`Given no address`, () => {
+      it(`responds with 404`, () => {
+        const addressId = 12345
+        return supertest(app)
+          .delete(`/api/address/${addressId}`)
+          .expect(404, { error: { message: `Address doesn't exist` } })
+      })
+    })
+
+    context(`Given there are addresses in the db`, () => {
+      const testUsers = fixtures.makeUsersArray()
+      const testAddress = fixtures.makeAddressArray(testUsers)
+
+      beforeEach('insert address', () => {
+        return db
+          .into('lodgelog_users')
+          .insert(testUsers)
+          .then(() => {
+            return db
+              .into('lodgelog_address')
+              .insert(testAddress)
+          })
+      })
+
+      it(`responds with 204 and removes the address`, () => {
+        const idToRemove = 2
+        const expectedAddress = testAddress.filter(address => address.id !== idToRemove)
+        return supertest(app)
+          .delete(`/api/address/${idToRemove}`)
+          .expect(204)
+          .then(res => {
+            supertest(app)
+              .get(`/api/address`)
+              .expect(expectedAddress)
+          })
+      })
+    })
+  })
+
+  describe(`PATCH /api/address/:id`, () => {
+
+    context(`Given no addresses`, () => {
+      it('responds with 404', () => {
+        const addressId = 123456
+        return supertest(app)
+          .delete(`/api/address/${addressId}`)
+          .expect(404, { error: { message: `Address doesn't exist` } })
+      })
+    })
+
+    context(`Given there are address in the db`, () => {
+      const testUsers = fixtures.makeUsersArray()
+      const testAddress = fixtures.makeAddressArray(testUsers)
+
+      beforeEach(`insert address`, () => {
+        return db
+          .into('lodgelog_users')
+          .insert(testUsers)
+          .then(() => {
+            return db
+              .into('lodgelog_address')
+              .insert(testAddress)
+          })
+      })
+
+      it('responds with 204 and updates the address', () => {
+        
+      })
+    })
   })
 })
