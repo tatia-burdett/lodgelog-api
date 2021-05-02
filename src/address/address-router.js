@@ -15,7 +15,7 @@ const serializeAddress = address => ({
   abb_state: address.abb_state,
   zipcode: address.zipcode,
   current: address.current,
-  userId: address.userId
+  userid: address.userid
 })
 
 addressRouter
@@ -28,10 +28,10 @@ addressRouter
       })
       .catch(next)
   })
-  .post(jsonParser, (res, res, next) => {
-    const { from_date, to_date, street_address, unit, city, abb_state, zipcode, current, userId} = req.body
-    const newAddress = { from_date, to_date, street_address, unit , city, abb_state, zipcode, current, userId }
-    const requiredFields = { from_date, street_address, city, abb_state, zipcode, userId }
+  .post(jsonParser, (req, res, next) => {
+    const { from_date, to_date, street_address, unit, city, abb_state, zipcode, current, userid} = req.body
+    const newAddress = { from_date, to_date, street_address, unit , city, abb_state, zipcode, current, userid }
+    const requiredFields = { from_date, street_address, city, abb_state, zipcode, userid }
 
     for (const [key, value] of Object.entries(requiredFields)) {
       if (!value) {
@@ -55,7 +55,7 @@ addressRouter
   })
 
 addressRouter
-  .route('/:addressId')
+  .route('/:id')
   .all((req, res, next) => {
     AddressService.getById(
       req.app.get('db'),
