@@ -31,63 +31,63 @@ function makeAddressArray(users) {
   return [
     {
       id: 1,
-      from_date: '2010-01-01',
-      to_date: '2012-06-20',
+      from_date: '2010-01-01T08:00:00.000Z',
+      to_date: '2012-06-20T07:00:00.000Z',
       street_address: '123 Test St',
       unit: null,
       city: 'Testville',
       abb_state: 'AL',
-      zipcode: '12345',
+      zipcode: 12345,
       current: false,
-      userId: users[0].id
+      userid: users[0].id
     },
     {
       id: 2,
-      from_date: '2015-01-01',
-      to_date: '2018-06-20',
+      from_date: '2015-01-01T08:00:00.000Z',
+      to_date: '2018-06-20T07:00:00.000Z',
       street_address: '234 Test Ave',
       unit: '15',
       city: 'Testville',
       abb_state: 'GA',
-      zipcode: '23456',
+      zipcode: 23456,
       current: false,
-      userId: users[1].id
+      userid: users[1].id
     },
     {
       id: 3,
-      from_date: '2018-01-01',
+      from_date: '2018-01-01T08:00:00.000Z',
       to_date: null,
       street_address: '345 Test Blvd',
       unit: '3',
       city: 'Testville',
       abb_state: 'AK',
-      zipcode: '34567',
+      zipcode: 34567,
       current: true,
-      userId: users[2].id
+      userid: users[2].id
     },
     {
       id: 4,
-      from_date: '2020-01-01',
+      from_date: '2020-01-01T08:00:00.000Z',
       to_date: null,
       street_address: '12 Test St',
       unit: '10',
       city: 'Testville',
       abb_state: 'FL',
-      zipcode: '45678',
+      zipcode: 45678,
       current: true,
-      userId: users[3].id
+      userid: users[3].id
     },
     {
       id: 5,
-      from_date: '2014-01-01',
-      to_date: '2017-12-20',
+      from_date: '2014-01-01T08:00:00.000Z',
+      to_date: '2017-12-20T08:00:00.000Z',
       street_address: '138 Test Ave',
       unit: '28',
       city: 'Testville',
       abb_state: 'CA',
-      zipcode: '56789',
+      zipcode: 56789,
       current: false,
-      userId: users[2].id
+      userid: users[2].id
     },
   ]
 }
