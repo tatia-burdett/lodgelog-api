@@ -8,7 +8,7 @@ const UserService = {
       .insert(newUser)
       .into('lodgelog_users')
       .returning('*')
-      .then(row => {
+      .then(rows => {
         return rows[0]
       })
   },

@@ -22,5 +22,83 @@ userRouter
       })
       .catch(next)
   })
+  .post(jsonParser, (req, res, next) => {
+    const { username, password } = req.body
+    const newUser = { username, password }
+
+    for (const [key, value] of Object.entries(newUser)) {
+      if (!value) {
+        return res.status(400).json({
+          error: { message: `Missing ${key} in request body` }
+        })
+      }
+    }
+    newUser.username = username
+    newUser.password = password
+
+    UserService.insertUser(
+      req.app.get('db'),
+      newUser
+    )
+      .then(user => {
+        res
+          .status(201)
+          .location(path.posix.join(req.originalUrl, `/${user.id}`))
+          .json(serializeUser(user))
+      })
+      .catch(next)
+  })
+
+userRouter
+  .route('/:userId')
+  .all((req, res, next) => {
+    UserService.getById(
+      req.app.get('db'),
+      req.params.userId
+    )
+      .then(user => {
+        if (!user) {
+          return res.status(404).json({
+            error: { message: `User doesn't exist` }
+          })
+        }
+        res.user = user
+        next()
+      })
+      .catch(next)
+  })
+  .get((req, res, next) => {
+    res.json(serializeUser(res.user))
+  })
+  .delete((req, res, next) => {
+    UserService.deleteUser(
+      req.app.get('db'),
+      req.params.userId
+    )
+      .then(numRowsAffected => {
+        res.status(204).end()
+      })
+      .catch(next)
+  })
+  .patch(jsonParser, (req, res, next) => {
+    const { username, password } = req.body
+    const userToUpdate = { username, password }
+
+    const numberOfValues = Object.values(userToUpdate).filter(Boolean).length
+    if (numberOfValues === 0) {
+      return res.status(400).json({
+        error: { message: `Request body must contain a 'userrname' or 'password'` }
+      })
+    }
+    UserService.updateUser(
+      req.app.get('db'),
+      req.params.userId,
+      userToUpdate
+    )
+      .then(numRowsAffected => {
+        res.status(204).end()
+      })
+      .catch(next)
+  })
 
 module.exports = userRouter
