@@ -228,7 +228,17 @@ describe('Address Endpoints', function() {
       })
 
       it('responds with 204 and updates the address', () => {
-        
+        const idToUpdate = 2
+        const updateAddress = {
+          from_date: '2018-01-01T08:00:00.000Z',
+          to_date: '2020-01-01T08:00:00.000Z',
+          street_address: '15 Updated St',
+          unit: '19',
+          city: 'Updatevill',
+          abb_state: 'WY',
+          zipcode: 98765,
+          current: false
+        }
       })
     })
   })
