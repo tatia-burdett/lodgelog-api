@@ -7,6 +7,11 @@ const fixtures = require('./test_fixtures')
 describe('Address Endpoints', function() {
   let db
 
+  function makeAuthHeader(user) {
+    const token = Buffer.from(`${user.username}:${user.password}`).toString('base64')
+    return `Basic ${token}`
+  }
+
   before('make knex instance', () => {
     db = knex({
       client: 'pg',
@@ -20,6 +25,30 @@ describe('Address Endpoints', function() {
   before('clean the table', () => db.raw('TRUNCATE lodgelog_address, lodgelog_users RESTART IDENTITY CASCADE'))
 
   afterEach('cleanup',() => db.raw('TRUNCATE lodgelog_address, lodgelog_users RESTART IDENTITY CASCADE'))
+
+  describe.only(`Protected endpoints`, () => {
+    const testUsers = fixtures.makeUsersArray()
+    const testAddress = fixtures.makeAddressArray(testUsers)
+
+    beforeEach('insert addresses', () => {
+      return db
+        .into('lodgelog_users')
+        .insert(testUsers)
+        .then(() => {
+          return db
+            .into('lodgelog_address')
+            .insert(testAddress)
+        })
+    })
+
+    describe(`Get /api/address/:id`, () => {
+      it(`responds with 401 and 'Missing basic token' when no basic token`, () => {
+        return supertest(app)
+          .get(`/api/address/123`)
+          .expect(401, { error: `Missing basic token` })
+      })
+    })
+  })
 
   describe(`GET /api/address`, () => {
 
@@ -54,13 +83,15 @@ describe('Address Endpoints', function() {
     })
   })
   
-  describe(`GET /api/address/:id`, () => {
+  describe.only(`GET /api/address/:id`, () => {
+    const testUsers = fixtures.makeUsersArray()
     
     context(`Given no address`, () => {
       it(`Responds with 404`, () => {
         const addressId = 123456
         return supertest(app)
           .get(`/api/address/${addressId}`)
+          .set('Authorization', makeAuthHeader(testUsers[0]))
           .expect(404, { error: { message: `Address doesn't exist` } })
       })
     })
@@ -85,6 +116,7 @@ describe('Address Endpoints', function() {
         const expectedAddress = testAddress[addressId - 1]
         return supertest(app)
           .get(`/api/address/${addressId}`)
+          .set('Authorization', makeAuthHeader(testUsers[0]))
           .expect(200, expectedAddress)
       })
     })
