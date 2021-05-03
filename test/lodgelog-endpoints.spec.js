@@ -263,6 +263,30 @@ describe('Address Endpoints', function() {
             error: { message: `Request body must contain a 'from_date', 'to_date", 'street_address', 'unit', 'city', 'abb_state', 'zipcode', or 'current'`}
           })
       })
+
+      it('responds with 204 when updating only a subset of fields', () => {
+        const idToUpdate = 2
+        const updateAddress = {
+          street_address: '123 Updated St'
+        }
+        const expectedAddress = {
+          ...testAddress[idToUpdate - 1],
+          ...updateAddress
+        }
+
+        return supertest(app)
+          .patch(`/api/address/${idToUpdate}`)
+          .send({
+            ...updateAddress,
+            fieldToIgnore: 'should not be in GET response'
+          })
+          .expect(204)
+          .then(res => {
+            supertest(app)
+              .get(`/api/address/${idToUpdate}`)
+              .expect(expectedAddress)
+          })
+      })
     })
   })
 })
