@@ -92,8 +92,10 @@ describe('Address Endpoints', function() {
     context(`Given no addresses`, () => {
       const testUsers = fixtures.makeUsersArray()
 
-      beforeEach(() => {
-        db.into('lodgelog_users').insert(testUsers)
+      beforeEach('insert users', () => {
+        return db
+          .into('lodgelog_users')
+          .insert(testUsers)
       })
 
       it(`responds with 200 and an empty list`, () => {
@@ -137,8 +139,10 @@ describe('Address Endpoints', function() {
     context(`Given no address`, () => { 
       const testUsers = fixtures.makeUsersArray()
 
-      beforeEach(() => {
-        db.into('lodgelog_users').insert(testUsers)
+      beforeEach('insert users', () => {
+        return db
+          .into('lodgelog_users')
+          .insert(testUsers)
       })
 
       it(`Responds with 404`, () => { // Test Failing, Not Sure Why
@@ -200,6 +204,7 @@ describe('Address Endpoints', function() {
 
       return supertest(app)
         .post('/api/address')
+        .set('Authorization', makeAuthHeader(testUsers[0]))
         .send(newAddress)
         .expect(201)
         .expect(res => {
@@ -218,6 +223,7 @@ describe('Address Endpoints', function() {
         .then(res => {
           supertest(app)
             .get(`/api/address/${res.body.id}`)
+            .set('Authorization', makeAuthHeader(testUsers[0]))
             .expect(res.body)
         })
     })
@@ -238,6 +244,7 @@ describe('Address Endpoints', function() {
 
         return supertest(app)
           .post(`/api/address`)
+          .set('Authorization', makeAuthHeader(testUsers[0]))
           .send(newAddress)
           .expect(400, {
             error: { message: `Missing ${field} in request body` }
@@ -249,10 +256,19 @@ describe('Address Endpoints', function() {
   describe(`DELETE /api/address/:id`, () => {
     
     context(`Given no address`, () => {
+      const testUsers = fixtures.makeUsersArray()
+
+      beforeEach('insert users', () => {
+        return db
+          .into('lodgelog_users')
+          .insert(testUsers)
+      })
+
       it(`responds with 404`, () => {
         const addressId = 12345
         return supertest(app)
           .delete(`/api/address/${addressId}`)
+          .set('Authorization', makeAuthHeader(testUsers[0]))
           .expect(404, { error: { message: `Address doesn't exist` } })
       })
     })
@@ -277,6 +293,7 @@ describe('Address Endpoints', function() {
         const expectedAddress = testAddress.filter(address => address.id !== idToRemove)
         return supertest(app)
           .delete(`/api/address/${idToRemove}`)
+          .set('Authorization', makeAuthHeader(testUsers[0]))
           .expect(204)
           .then(res => {
             supertest(app)
@@ -290,10 +307,19 @@ describe('Address Endpoints', function() {
   describe(`PATCH /api/address/:id`, () => {
 
     context(`Given no addresses`, () => {
+      const testUsers = fixtures.makeUsersArray()
+
+      beforeEach('insert users', () => {
+        return db
+          .into('lodgelog_users')
+          .insert(testUsers)
+      })
+
       it('responds with 404', () => {
         const addressId = 123456
         return supertest(app)
           .delete(`/api/address/${addressId}`)
+          .set('Authorization', makeAuthHeader(testUsers[0]))
           .expect(404, { error: { message: `Address doesn't exist` } })
       })
     })
@@ -331,6 +357,7 @@ describe('Address Endpoints', function() {
         }
         return supertest(app)
           .patch(`/api/address/${idToUpdate}`)
+          .set('Authorization', makeAuthHeader(testUsers[0]))
           .send(updateAddress)
           .expect(204)
           .then(res => {
@@ -344,6 +371,7 @@ describe('Address Endpoints', function() {
         const idToUpdate = 2
         return supertest(app)
           .patch(`/api/address/${idToUpdate}`)
+          .set('Authorization', makeAuthHeader(testUsers[0]))
           .send({ irrelevantField: 'foo' })
           .expect(400, {
             error: { message: `Request body must contain a 'from_date', 'to_date", 'street_address', 'unit', 'city', 'abb_state', 'zipcode', or 'current'`}
@@ -362,6 +390,7 @@ describe('Address Endpoints', function() {
 
         return supertest(app)
           .patch(`/api/address/${idToUpdate}`)
+          .set('Authorization', makeAuthHeader(testUsers[0]))
           .send({
             ...updateAddress,
             fieldToIgnore: 'should not be in GET response'
