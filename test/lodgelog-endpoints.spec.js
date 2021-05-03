@@ -239,6 +239,29 @@ describe('Address Endpoints', function() {
           zipcode: 98765,
           current: false
         }
+        const expectedAddress = {
+          ...testAddress[idToUpdate - 1],
+          ...updateAddress
+        }
+        return supertest(app)
+          .patch(`/api/address/${idToUpdate}`)
+          .send(updateAddress)
+          .expect(204)
+          .then(res => {
+            supertest(app)
+              .get(`/api/address/${idToUpdate}`)
+              .expect(expectedAddress)
+          })
+      })
+
+      it(`responds with 400 when no required fields supplied`, () => {
+        const idToUpdate = 2
+        return supertest(app)
+          .patch(`/api/address/${idToUpdate}`)
+          .send({ irrelevantField: 'foo' })
+          .expect(400, {
+            error: { message: `Request body must contain a 'from_date', 'to_date", 'street_address', 'unit', 'city', 'abb_state', 'zipcode', or 'current'`}
+          })
       })
     })
   })
