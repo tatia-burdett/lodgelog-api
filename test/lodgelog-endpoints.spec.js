@@ -26,7 +26,7 @@ describe('Address Endpoints', function() {
 
   afterEach('cleanup',() => db.raw('TRUNCATE lodgelog_address, lodgelog_users RESTART IDENTITY CASCADE'))
 
-  describe.only(`Protected endpoints`, () => {
+  describe(`Protected endpoints`, () => {
     const testUsers = fixtures.makeUsersArray()
     const testAddress = fixtures.makeAddressArray(testUsers)
 
@@ -41,11 +41,48 @@ describe('Address Endpoints', function() {
         })
     })
 
-    describe(`Get /api/address/:id`, () => {
-      it(`responds with 401 and 'Missing basic token' when no basic token`, () => {
-        return supertest(app)
-          .get(`/api/address/123`)
-          .expect(401, { error: `Missing basic token` })
+    const protectedEndpoints = [
+      {
+        name: `GET /api/address/:id`,
+        path: '/api/address/1'
+      },
+      {
+        name: `GET /api/address`,
+        path: `/api/address`
+      }
+    ]
+
+    protectedEndpoints.forEach(endpoint => {
+      describe(endpoint.name, () => {
+        it(`responds with 401 and 'Missing basic token' when no basic token`, () => {
+          return supertest(app)
+            .get(endpoint.path)
+            .expect(401, { error: `Missing basic token` })
+        })
+  
+        it('responds 401 "Unathorized request" when no credentials in token', () => {
+          const userNoCred = { username: '', password: '' }
+          return supertest(app)
+            .get(endpoint.path)
+            .set('Authorization', makeAuthHeader(userNoCred))
+            .expect(401, { error: 'Unauthorized request' })
+        })
+  
+        it('responds 401 "Unauthorized request" when invalid user', () => {
+          const userInvalidCreds = { username: 'user-not', password: 'pass-not' }
+          return supertest(app)
+            .get(endpoint.path)
+            .set('Authorization', makeAuthHeader(userInvalidCreds))
+            .expect(401, { error: 'Unauthorized request' })
+        })
+  
+        it('responds 401 "Unauthorized request" when invalid password', () => {
+          const userInvalidPass = { username: testUsers[0].username, password: 'wrong' }
+          return supertest(app) 
+            .get(endpoint.path)
+            .set('Authorization', makeAuthHeader(userInvalidPass))
+            .expect(401, { error: 'Unauthorized request' })
+        })
       })
     })
   })
@@ -53,9 +90,16 @@ describe('Address Endpoints', function() {
   describe(`GET /api/address`, () => {
 
     context(`Given no addresses`, () => {
+      const testUsers = fixtures.makeUsersArray()
+
+      beforeEach(() => {
+        db.into('lodgelog_users').insert(testUsers)
+      })
+
       it(`responds with 200 and an empty list`, () => {
         return supertest(app)
           .get(`/api/address`)
+          .set('Authorization', makeAuthHeader(testUsers[0]))
           .expect(200, [])
       })
     })
@@ -63,6 +107,10 @@ describe('Address Endpoints', function() {
     context(`Given there are addresses in the db`, () => {
       const testUsers = fixtures.makeUsersArray()
       const testAddress = fixtures.makeAddressArray(testUsers)
+
+      beforeEach(() => {
+        db.into('lodgelog_users').insert(testUsers)
+      })
 
       beforeEach('insert addresses', () => {
         return db
@@ -78,16 +126,22 @@ describe('Address Endpoints', function() {
       it('respond with 200 and all the addresses', () => {
         return supertest(app)
           .get('/api/address')
+          .set('Authorization', makeAuthHeader(testUsers[0]))
           .expect(200, testAddress)
       })
     })
   })
   
-  describe.only(`GET /api/address/:id`, () => {
-    const testUsers = fixtures.makeUsersArray()
-    
-    context(`Given no address`, () => {
-      it(`Responds with 404`, () => {
+  describe(`GET /api/address/:id`, () => {  
+
+    context(`Given no address`, () => { 
+      const testUsers = fixtures.makeUsersArray()
+
+      beforeEach(() => {
+        db.into('lodgelog_users').insert(testUsers)
+      })
+
+      it(`Responds with 404`, () => { // Test Failing, Not Sure Why
         const addressId = 123456
         return supertest(app)
           .get(`/api/address/${addressId}`)
