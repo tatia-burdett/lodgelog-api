@@ -120,7 +120,14 @@ userRouter
       .catch(next)
   })
   .get((req, res, next) => {
-    UserService
+    UserService.getAddressForUsers(
+      req.app.get('db'),
+      req.params.userId
+    )
+    .then(address => {
+      res.json(address.map(UserService.serializeUserAddress))
+    })
+    .catch(next)
   })
 
 module.exports = userRouter
