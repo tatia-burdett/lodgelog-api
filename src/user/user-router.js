@@ -1,6 +1,7 @@
 const path = require('path')
 const express = require('express')
 const UserService = require('./user-service')
+const { requireAuth } = require('../middleware/basic-auth')
 
 const userRouter = express.Router()
 const jsonParser = express.json()
@@ -12,8 +13,7 @@ const serializeUser = user => ({
   date_created: user.date_created
 })
 
-userRouter
-  .route('/')
+userRouter.route('/')
   .get((req, res, next) => {
     const knexInstance = req.app.get('db')
     UserService.getAllUsers(knexInstance)
@@ -49,8 +49,7 @@ userRouter
       .catch(next)
   })
 
-userRouter
-  .route('/:userId')
+userRouter.route('/:userId')
   .all((req, res, next) => {
     UserService.getById(
       req.app.get('db'),
@@ -101,8 +100,8 @@ userRouter
       .catch(next)
   })
 
-userRouter
-  .route(`/:userId/address`)
+userRouter.route(`/:userId/address`)
+  // .all(requireAuth)
   .all((req, res, next) => {
     UserService.getById(
       req.app.get('db'),
