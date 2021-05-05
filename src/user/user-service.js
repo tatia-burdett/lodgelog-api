@@ -21,6 +21,19 @@ const UserService = {
       .first()
   },
 
+  getAddressForUsers(knex, userId) {
+    return knex
+      .from('lodgelog_address AS add')
+      .select('*')
+      .where('add.userid', userId)
+      .leftJoin(
+        'lodgelog_users AS usr',
+        'add.userid',
+        'usr.id'
+      )
+      .groupBy('add.id', 'usr.id')
+  },
+
   deleteUser(knex, id) {
     return knex('lodgelog_users')
       .where({ id })

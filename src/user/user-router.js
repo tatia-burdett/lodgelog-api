@@ -101,4 +101,26 @@ userRouter
       .catch(next)
   })
 
+userRouter
+  .route(`/:userId/address`)
+  .all((req, res, next) => {
+    UserService.getById(
+      req.app.get('db'),
+      req.params.userId
+    )
+      .then(user => {
+        if (!user) {
+          return res.status(404).json({
+            error: { message: `User doesn't exist` }
+          })
+        }
+        res.user = user
+        next()
+      })
+      .catch(next)
+  })
+  .get((req, res, next) => {
+    UserService
+  })
+
 module.exports = userRouter
