@@ -40,6 +40,42 @@ const UserService = {
       username: xss(user.username),
       date_created: new Date(user.date_created)
     }
+  },
+
+  getById(knex, id) {
+    return knex
+      .from('lodgelog_users')
+      .select('*')
+      .where('id', id)
+      .first()
+  },
+
+  getAddressForUsers(knex, userid) {
+    return knex
+      .from('lodgelog_address AS add')
+      .select('*')
+      .where('add.userid', userid)
+      .leftJoin(
+        'lodgelog_users AS usr',
+        'add.userid',
+        'usr.id'
+      )
+      .groupBy('add.id', 'usr.id')
+  },
+
+  serializeUserAddress(address) {
+    return {
+      id: address.id,
+      from_date: address.from_date,
+      to_date: address.to_date,
+      street_address: address.street_address,
+      unit: address.unit,
+      city: address.city,
+      abb_state: address.abb_state,
+      zipcode: address.zipcode,
+      current: address.current,
+      userId: address.userid
+    }
   }
 }
 

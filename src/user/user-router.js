@@ -1,6 +1,7 @@
 const path = require('path')
 const express = require('express')
 const UserService = require('./user-service')
+const { requireAuth } = require('../middleware/basic-auth')
 
 const userRouter = express.Router()
 const jsonParser = express.json()
@@ -53,6 +54,36 @@ userRouter
                   .json(UserService.serializeUser(user))
               })
           })
+      })
+      .catch(next)
+  })
+
+userRouter
+  .route('/:id/address')
+  .all(requireAuth)
+  .all((req, res, next) => {
+    UserService.getById(
+      req.app.get('db'),
+      req.params.id
+    )
+      .then(user => {
+        if (!user) {
+          return res.status(404).json({
+            error: { message: `User doesn't exist` }
+          })
+        }
+        res.user =user
+        next()
+      })
+      .catch(next)
+  })
+  .get((req, res, next) => {
+    UserService.getAddressForUsers(
+      req.app.get('db'),
+      req.params.id
+    )
+      .then(address => {
+        res.json(address.map(UserService.serializeUserAddress))
       })
       .catch(next)
   })
