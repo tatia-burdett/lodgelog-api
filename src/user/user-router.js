@@ -6,8 +6,25 @@ const { requireAuth } = require('../middleware/basic-auth')
 const userRouter = express.Router()
 const jsonParser = express.json()
 
+const serializeUser = user => ({
+  id: user.id,
+  username: user.username,
+  password: user.password,
+  date_created: user.date_created
+})
+
 userRouter
-  .post('/', jsonParser, (req, res, next) => {
+  .route('/')
+  .get((req, res, next) => {
+    const knexInstance = req.app.get('db')
+    UserService.getAllUsers(knexInstance)
+      .then(users => {
+        res.json(users.map(serializeUser))
+      })
+      .catch(next)
+  })
+
+  .post(jsonParser, (req, res, next) => {
     const { password, username } = req.body
     const newUser = { password, username}
 
@@ -60,7 +77,7 @@ userRouter
 
 userRouter
   .route('/:id/address')
-  .all(requireAuth)
+  // .all(requireAuth)
   .all((req, res, next) => {
     UserService.getById(
       req.app.get('db'),

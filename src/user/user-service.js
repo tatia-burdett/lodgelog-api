@@ -2,6 +2,10 @@ const bcrypt = require('bcryptjs')
 const xss = require('xss')
 
 const UserService = {
+  getAllUsers(knex) {
+    return knex.select('*').from('lodgelog_users')
+  },
+
   hasUserWithUsername(knex, username) {
     return knex('lodgelog_users')
       .where({ username })
