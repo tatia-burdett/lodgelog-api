@@ -4,7 +4,7 @@ const config = require('../config')
 
 const AuthService = {
   getUserWithUsername(knex, username) {
-    return knex
+    return knex('lodgelog_users')
       .where({ username })
       .first()
   },
@@ -17,7 +17,7 @@ const AuthService = {
     return jwt.sign(payload, config.JWT_SECRET, {
       subject,
       expiresIn: config.JWT_EXPIRY,
-      algorithm: 'HS256'
+      algorithm: 'HS256',
     })
   },
 

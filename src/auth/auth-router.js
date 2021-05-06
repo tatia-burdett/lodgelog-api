@@ -35,9 +35,8 @@ authRouter
               error: 'Incorrect username or password'
             })
           }
-
           const sub = dbUser.username
-          const payload = { userId: dbUser.id}
+          const payload = { id: dbUser.id}
           res.send({
             authToken: AuthService.createJwt(sub, payload)
           })
@@ -49,7 +48,7 @@ authRouter
 authRouter
   .post('/refresh', requireAuth, (req, res, next) => {
     const sub = req.user.username
-    const payload = { userId: req.user.id }
+    const payload = { id: req.user.id }
     res.send({
       authToken: AuthService.createJwt(sub, payload)
     })
