@@ -59,7 +59,7 @@ addressRouter
 
 addressRouter
   .route('/:userid')
-  // .all(requireAuth)
+  // .all(requireAuth)  --- States missing basic auth token....
   .all((req, res, next) => {
     const knexInstance = req.app.get('db')
     console.log(req.params.userid)
