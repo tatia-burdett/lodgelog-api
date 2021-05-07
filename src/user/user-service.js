@@ -21,6 +21,12 @@ const UserService = {
       .then(([user]) => user)
   },
 
+  deleteUser(knex, id) {
+    return knex('lodgelog_users')
+      .where({ id })
+      .delete()
+  },
+
   validatePassword(password) {
     if (password.length < 8) {
       return 'Password must be longer than 8 characters'

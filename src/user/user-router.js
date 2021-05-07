@@ -75,6 +75,35 @@ userRouter
   })
 
 userRouter
+  .route('/:id')
+  .all((req, res, next) => {
+    UserService.getById(
+      req.app.get('db'),
+      req.params.id
+    )
+      .then(user => {
+        if (!user) {
+          return res.status(404).json({
+            error: { message: `User doesn't exist` }
+          })
+        }
+        res.user = user
+        next()
+      })
+      .catch(next)
+  })
+  .delete((req, res, next) => {
+    UserService.deleteUser(
+      req.app.get('db'),
+      req.params.id
+    )
+      .then(numRowsAffected => {
+        res.status(204).end()
+      })
+      .catch(next)
+  })
+
+userRouter
   .route('/:id/address')
   // .all(requireAuth)
   .all((req, res, next) => {

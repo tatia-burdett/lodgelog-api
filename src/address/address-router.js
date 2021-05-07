@@ -92,9 +92,9 @@ addressRouter.route('/:id')
       })
       .catch(next)
   })
-  .get((req, res, next) => {
-    res.json(serializeAddress(res.address))
-  })
+  // .get((req, res, next) => {
+  //   res.json(serializeAddress(res.address))
+  // })
   .delete((req, res, next) => {
     AddressService.deleteAddress(
       req.app.get('db'),
