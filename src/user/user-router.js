@@ -9,7 +9,6 @@ const jsonParser = express.json()
 const serializeUser = user => ({
   id: user.id,
   username: user.username,
-  password: user.password,
   date_created: user.date_created
 })
 
@@ -77,11 +76,11 @@ userRouter
 
 userRouter
   .route('/:id/address')
-  .all(requireAuth)
+  // .all(requireAuth)
   .all((req, res, next) => {
     UserService.getById(
       req.app.get('db'),
-      req.params.userId
+      req.params.userid
     )
       .then(user => {
         if (!user) {

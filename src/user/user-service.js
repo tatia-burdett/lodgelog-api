@@ -58,10 +58,10 @@ const UserService = {
     return knex
       .from('lodgelog_address AS add')
       .select('*')
-      .where('add.userid', userid)
+      .where('add.userId', userid)
       .leftJoin(
         'lodgelog_users AS usr',
-        'add.userid',
+        'add.userId',
         'usr.id'
       )
       .groupBy('add.id', 'usr.id')
