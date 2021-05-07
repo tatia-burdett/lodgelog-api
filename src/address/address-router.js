@@ -2,6 +2,7 @@ const path = require('path')
 const express = require('express')
 const AddressService = require('./address-service')
 const { requireAuth } = require('../middleware/basic-auth')
+const UserService = require('../user/user-service')
 
 const addressRouter = express.Router()
 const jsonParser = express.json()
@@ -21,7 +22,7 @@ const serializeAddress = address => ({
 
 addressRouter
   .route('/')
-  .all(requireAuth)
+  // .all(requireAuth)
   .get((req, res, next) => {
     const knexInstance = req.app.get('db')
     AddressService.getAllAddresses(knexInstance)
@@ -52,6 +53,23 @@ addressRouter
           .status(201)
           .location(path.posix.join(req.originalUrl, `/${address.id}`))
           .json(serializeAddress(address))
+      })
+      .catch(next)
+  })
+
+addressRouter
+  .route('/:userid')
+  // .all(requireAuth)
+  .all((req, res, next) => {
+    const knexInstance = req.app.get('db')
+    console.log(req.params.userid)
+    AddressService.getAddressForUsers(
+      knexInstance,
+      req.params.userid
+    )
+      .then(user => {
+        console.log(user)
+        res.json(user)
       })
       .catch(next)
   })

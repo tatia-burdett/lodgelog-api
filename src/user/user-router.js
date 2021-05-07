@@ -81,7 +81,7 @@ userRouter
   .all((req, res, next) => {
     UserService.getById(
       req.app.get('db'),
-      req.params.id
+      req.params.userId
     )
       .then(user => {
         if (!user) {
@@ -89,7 +89,7 @@ userRouter
             error: { message: `User doesn't exist` }
           })
         }
-        res.user =user
+        res.user = user
         next()
       })
       .catch(next)

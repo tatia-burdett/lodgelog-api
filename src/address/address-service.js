@@ -31,6 +31,19 @@ const AddressService = {
     return knex('lodgelog_address')
       .where({ id })
       .update(newAddressFields)
+  },
+
+  getAddressForUsers(knex, id) {
+    return knex
+      .from('lodgelog_users AS usr')
+      .select('*')
+      .where('usr.id', id)
+      .rightJoin(
+        'lodgelog_address AS add',
+        'usr.id',
+        'add.userid'
+      )
+      .groupBy('usr.id', 'add.id')
   }
 }
 
