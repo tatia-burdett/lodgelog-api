@@ -52,7 +52,7 @@ describe('Auth endpoints', () => {
       })
     })
 
-    it(`responds with 400 and 'invalid username or password' when bad username`, () => {
+    it (`responds with 400 and 'invalid username or password' when bad username`, () => {
       const invalidUser = { username: 'invalid', password: 'existy' }
       return supertest(app)
         .post('/api/auth/login')
@@ -62,13 +62,36 @@ describe('Auth endpoints', () => {
         })
     })
 
-    it(`responds with 400 and 'invalid username or password' when bas password`, () => {
+    it (`responds with 400 and 'invalid username or password' when bas password`, () => {
       const invalidUser = { username: testUsers[0].username, password: 'incorrect' }
       return supertest(app)
         .post('/api/auth/login')
         .send(invalidUser)
         .expect(400, {
           error: `Incorrect username or password`
+        })
+    })
+
+    it (`responds with 200, JWT auth token, and user id with valid credentials`, () => {
+      const validUser = {
+        username: testUsers[0].username,
+        password: testUsers[0].password
+      }
+      const expectedToken = jwt.sign(
+        { id: testUsers[0].id },
+        process.env.JWT_SECRET,
+        {
+          subject: testUsers[0].username,
+          expiresIn: process.env.JWT_EXPIRY,
+          algorithm: 'HS256'
+        }
+      )
+      return supertest(app)
+        .post('/api/auth/login')
+        .send(validUser)
+        .expect(200, {
+          id: testUsers[0].id,
+          authToken: expectedToken
         })
     })
   })
