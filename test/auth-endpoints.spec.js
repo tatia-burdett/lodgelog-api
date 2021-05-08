@@ -5,7 +5,7 @@ const fixtures = require('./test_fixtures')
 const supertest = require('supertest')
 
 
-describe('Auth endpoints', () => {
+describe.only('Auth endpoints', () => {
   let db
 
   before('make knex instance', () => {
@@ -22,7 +22,7 @@ describe('Auth endpoints', () => {
 
   afterEach('cleanup', () => db.raw('TRUNCATE lodgelog_address, lodgelog_users RESTART IDENTITY CASCADE'))
 
-  describe.only('POST /api/auth/login', () => {
+  describe('POST /api/auth/login', () => {
     const testUsers = fixtures.makeUsersArray()
 
     beforeEach('insert user', () => {
@@ -91,6 +91,34 @@ describe('Auth endpoints', () => {
         .send(validUser)
         .expect(200, {
           id: testUsers[0].id,
+          authToken: expectedToken
+        })
+    })
+  })
+
+  describe(`POST /api/auth/refresh`, () => {
+    const testUsers = fixtures.makeUsersArray()
+    beforeEach('insert users', () => {
+      fixtures.seedUser(
+        db,
+        testUsers
+      )
+    })
+
+    it(`responds with 200 and JWT auth token`, () => {
+      const expectedToken = jwt.sign(
+        { id: testUsers[0].id },
+        process.env.JWT_SECRET,
+        {
+          subject: testUsers[0].username,
+          expiresIn: process.env.JWT_EXPIRY,
+          algorithm: 'HS256'
+        }
+      )
+      return supertest(app)
+        .post('/api/auth/refresh')
+        .set('Authorization', fixtures.makeAuthHeader(testUsers[0]))
+        .expect(200, {
           authToken: expectedToken
         })
     })
