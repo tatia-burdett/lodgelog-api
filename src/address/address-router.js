@@ -59,17 +59,15 @@ addressRouter
 
 addressRouter
   .route('/:userid')
-  // .all(requireAuth)  --- States missing basic auth token....
+  .all(requireAuth) 
   .all((req, res, next) => {
     const knexInstance = req.app.get('db')
-    console.log(req.params.userid)
     AddressService.getAddressForUsers(
       knexInstance,
       req.params.userid
     )
-      .then(user => {
-        console.log(user)
-        res.json(user)
+      .then(userAdd => {
+        res.json(userAdd)
       })
       .catch(next)
   })
