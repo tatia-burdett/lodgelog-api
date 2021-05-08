@@ -1,3 +1,6 @@
+const bcrypt = require('bcryptjs')
+const jwt = require('jsonwebtoken')
+
 function makeUsersArray() {
   return [
     {
@@ -98,8 +101,23 @@ function makeAddressFixtures() {
   return { testUsers, testAddress }
 }
 
+function seedUser(db, users) {
+  const preppedUsers = users.map(user => ({
+    ...user,
+    password: bcrypt.hashSync(user.password, 1)
+  }))
+  return db.into('lodgelog_users').insert(preppedUsers)
+    .then(() =>
+      db.raw(
+        `SELECT setval('blogful_users_id_seq', ?)`,
+        [users[users.length - 1].id],
+      )
+    )
+}
+
 module.exports = {
   makeUsersArray,
   makeAddressArray,
-  makeAddressFixtures
+  makeAddressFixtures,
+  seedUser
 }
