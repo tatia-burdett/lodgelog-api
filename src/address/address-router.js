@@ -21,7 +21,6 @@ const serializeAddress = address => ({
 
 addressRouter
   .route('/')
-  // .all(requireAuth)
   .get((req, res, next) => {
     const knexInstance = req.app.get('db')
     AddressService.getAllAddresses(knexInstance)
@@ -57,7 +56,7 @@ addressRouter
   })
 
 addressRouter
-  .route('/:userid')
+  .route('/user/:userid')
   .all(requireAuth) 
   .all((req, res, next) => {
     const knexInstance = req.app.get('db')
@@ -72,7 +71,6 @@ addressRouter
   })
 
 addressRouter.route('/:id')
-  .all(requireAuth)
   .all((req, res, next) => {
     AddressService.getById(
       req.app.get('db'),
@@ -89,9 +87,9 @@ addressRouter.route('/:id')
       })
       .catch(next)
   })
-  // .get((req, res, next) => {
-  //   res.json(serializeAddress(res.address))
-  // })
+  .get((req, res, next) => {
+    res.json(serializeAddress(res.address))
+  })
   .delete((req, res, next) => {
     AddressService.deleteAddress(
       req.app.get('db'),
