@@ -1,8 +1,7 @@
 const path = require('path')
 const express = require('express')
 const AddressService = require('./address-service')
-const { requireAuth } = require('../middleware/basic-auth')
-const UserService = require('../user/user-service')
+const { requireAuth } = require('../middleware/jwt-auth')
 
 const addressRouter = express.Router()
 const jsonParser = express.json()
