@@ -5,7 +5,7 @@ const fixtures = require('./test_fixtures')
 const supertest = require('supertest')
 
 
-describe.only('Auth endpoints', () => {
+describe('Auth endpoints', () => {
   let db
 
   before('make knex instance', () => {

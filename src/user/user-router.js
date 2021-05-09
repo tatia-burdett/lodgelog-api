@@ -13,14 +13,14 @@ const serializeUser = user => ({
 
 userRouter
   .route('/')
-  .get((req, res, next) => {
-    const knexInstance = req.app.get('db')
-    UserService.getAllUsers(knexInstance)
-      .then(users => {
-        res.json(users.map(serializeUser))
-      })
-      .catch(next)
-  })
+  // .get((req, res, next) => {
+  //   const knexInstance = req.app.get('db')
+  //   UserService.getAllUsers(knexInstance)
+  //     .then(users => {
+  //       res.json(users.map(serializeUser))
+  //     })
+  //     .catch(next)
+  // })
 
   .post(jsonParser, (req, res, next) => {
     const { password, username } = req.body
