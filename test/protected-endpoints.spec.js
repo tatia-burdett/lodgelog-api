@@ -3,7 +3,7 @@ const supertest = require('supertest')
 const app = require('../src/app')
 const fixtures = require('./test_fixtures')
 
-describe.only('Protected endpoints', () => {
+describe('Protected endpoints', () => {
   let db
 
   before('Make knex instance', () => {

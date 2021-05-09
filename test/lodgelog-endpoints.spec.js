@@ -1,16 +1,9 @@
-const { expect } = require('chai')
 const knex = require('knex')
-const supertest = require('supertest')
 const app = require('../src/app')
 const fixtures = require('./test_fixtures')
 
 describe('Address Endpoints', function() {
   let db
-
-  function makeAuthHeader(user) {
-    const token = Buffer.from(`${user.username}:${user.password}`).toString('base64')
-    return `Basic ${token}`
-  }
 
   before('make knex instance', () => {
     db = knex({
@@ -26,64 +19,7 @@ describe('Address Endpoints', function() {
 
   afterEach('cleanup',() => db.raw('TRUNCATE lodgelog_address, lodgelog_users RESTART IDENTITY CASCADE'))
 
-  describe(`Protected endpoints`, () => {
-    const testUsers = fixtures.makeUsersArray()
-    const testAddress = fixtures.makeAddressArray(testUsers)
-
-    beforeEach('insert addresses', () => {
-      return db
-        .into('lodgelog_users')
-        .insert(testUsers)
-        .then(() => {
-          return db
-            .into('lodgelog_address')
-            .insert(testAddress)
-        })
-    })
-
-    const protectedEndpoints = [
-      {
-        name: `GET /api/address/user/:id`,
-        path: '/api/address/1'
-      },
-    ]
-
-    protectedEndpoints.forEach(endpoint => {
-      describe(endpoint.name, () => {
-        it(`responds with 401 and 'Missing basic token' when no basic token`, () => {
-          return supertest(app)
-            .get(endpoint.path)
-            .expect(401, { error: `Missing basic token` })
-        })
-  
-        it('responds 401 "Unathorized request" when no credentials in token', () => {
-          const userNoCred = { username: '', password: '' }
-          return supertest(app)
-            .get(endpoint.path)
-            .set('Authorization', makeAuthHeader(userNoCred))
-            .expect(401, { error: 'Unauthorized request' })
-        })
-  
-        it('responds 401 "Unauthorized request" when invalid user', () => {
-          const userInvalidCreds = { username: 'user-not', password: 'pass-not' }
-          return supertest(app)
-            .get(endpoint.path)
-            .set('Authorization', makeAuthHeader(userInvalidCreds))
-            .expect(401, { error: 'Unauthorized request' })
-        })
-  
-        it('responds 401 "Unauthorized request" when invalid password', () => {
-          const userInvalidPass = { username: testUsers[0].username, password: 'wrong' }
-          return supertest(app) 
-            .get(endpoint.path)
-            .set('Authorization', makeAuthHeader(userInvalidPass))
-            .expect(401, { error: 'Unauthorized request' })
-        })
-      })
-    })
-  })
-
-  describe(`GET /api/address`, () => {
+  describe.only(`GET /api/address`, () => {
 
     context(`Given no addresses`, () => {
       const testUsers = fixtures.makeUsersArray()
