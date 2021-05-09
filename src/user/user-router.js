@@ -13,26 +13,24 @@ const serializeUser = user => ({
 
 userRouter
   .route('/')
-  // .get((req, res, next) => {
-  //   const knexInstance = req.app.get('db')
-  //   UserService.getAllUsers(knexInstance)
-  //     .then(users => {
-  //       res.json(users.map(serializeUser))
-  //     })
-  //     .catch(next)
-  // })
+  .get((req, res, next) => {
+    const knexInstance = req.app.get('db')
+    UserService.getAllUsers(knexInstance)
+      .then(users => {
+        res.json(users.map(serializeUser))
+      })
+      .catch(next)
+  })
 
   .post(jsonParser, (req, res, next) => {
     const { password, username } = req.body
-    const newUser = { password, username}
+    // const newUser = { password, username}
 
-    for (const [key, value] of Object.keys(newUser)) {
-      if (!value) {
+    for (const field of ['username', 'password'])
+      if (!req.body[field])
         return res.status(400).json({
-          error: `Missing '${key}' in request body`
+          error: `Missing '${field}' in request body`
         })
-      }
-    }
 
     const passwordError = UserService.validatePassword(password)
 

@@ -22,7 +22,7 @@ describe('User endpoints', () => {
 
   afterEach('cleanup', () => db.raw('TRUNCATE lodgelog_address, lodgelog_users RESTART IDENTITY CASCADE'))
 
-  describe.only('POST /api/user', () => {
+  describe('POST /api/user', () => {
 
     context('User validation', () => {
       
