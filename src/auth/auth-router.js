@@ -11,11 +11,10 @@ authRouter
     const loginUser = { username, password }
 
     for (const [key, value] of Object.entries(loginUser))
-      if (!value) {
+      if (value == null)
         return res.status(400).json({
           error: `Missing '${key}' in request body`
         })
-      }
     
     AuthService.getUserWithUsername(
       req.app.get('db'),
@@ -38,8 +37,6 @@ authRouter
           const id = dbUser.id
           const sub = dbUser.username
           const payload = { id: dbUser.id}
-          console.log(id, 'hello')
-          console.log(payload)
           res.send({
             id: id,
             authToken: AuthService.createJwt(sub, payload)
