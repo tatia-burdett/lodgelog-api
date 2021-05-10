@@ -24,7 +24,6 @@ userRouter
 
   .post(jsonParser, (req, res, next) => {
     const { password, username } = req.body
-    // const newUser = { password, username}
 
     for (const field of ['username', 'password'])
       if (!req.body[field])
