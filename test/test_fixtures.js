@@ -34,8 +34,8 @@ function makeAddressArray(users) {
   return [
     {
       id: 1,
-      from_date: '2010-01-01T08:00:00.000Z',
-      to_date: '2012-06-20T07:00:00.000Z',
+      from_date: '2010-01-01T00:00:00.000Z',
+      to_date: '2012-06-20T00:00:00.000Z',
       street_address: '123 Test St',
       unit: null,
       city: 'Testville',
@@ -46,8 +46,8 @@ function makeAddressArray(users) {
     },
     {
       id: 2,
-      from_date: '2015-01-01T08:00:00.000Z',
-      to_date: '2018-06-20T07:00:00.000Z',
+      from_date: '2015-01-01T00:00:00.000Z',
+      to_date: '2018-06-20T00:00:00.000Z',
       street_address: '234 Test Ave',
       unit: '15',
       city: 'Testville',
@@ -58,7 +58,7 @@ function makeAddressArray(users) {
     },
     {
       id: 3,
-      from_date: '2018-01-01T08:00:00.000Z',
+      from_date: '2018-01-01T00:00:00.000Z',
       to_date: null,
       street_address: '345 Test Blvd',
       unit: '3',
@@ -70,7 +70,7 @@ function makeAddressArray(users) {
     },
     {
       id: 4,
-      from_date: '2020-01-01T08:00:00.000Z',
+      from_date: '2020-01-01T00:00:00.000Z',
       to_date: null,
       street_address: '12 Test St',
       unit: '10',
@@ -82,8 +82,8 @@ function makeAddressArray(users) {
     },
     {
       id: 5,
-      from_date: '2014-01-01T08:00:00.000Z',
-      to_date: '2017-12-20T08:00:00.000Z',
+      from_date: '2014-01-01T00:00:00.000Z',
+      to_date: '2017-12-20T00:00:00.000Z',
       street_address: '138 Test Ave',
       unit: '28',
       city: 'Testville',

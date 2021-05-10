@@ -19,7 +19,7 @@ describe('Address Endpoints', function() {
 
   afterEach('cleanup',() => db.raw('TRUNCATE lodgelog_address, lodgelog_users RESTART IDENTITY CASCADE'))
 
-  describe.only(`GET /api/address`, () => {
+  describe(`GET /api/address`, () => {
 
     context(`Given no addresses`, () => {
       const testUsers = fixtures.makeUsersArray()
@@ -59,7 +59,6 @@ describe('Address Endpoints', function() {
       it('respond with 200 and all the addresses', () => {
         return supertest(app)
           .get('/api/address')
-          .set('Authorization', makeAuthHeader(testUsers[0]))
           .expect(200, testAddress)
       })
     })
@@ -76,11 +75,11 @@ describe('Address Endpoints', function() {
           .insert(testUsers)
       })
 
-      it(`Responds with 404`, () => { // Test Failing, Not Sure Why
-        const addressId = 123456
+      it(`Responds with 404`, () => { 
+        const userId = 123456
         return supertest(app)
-          .get(`/api/address/${addressId}`)
-          .set('Authorization', makeAuthHeader(testUsers[0]))
+          .get(`/api/address/${userId}`)
+          .set('Authorization', fixtures.makeAuthHeader(testUsers[0]))
           .expect(404, { error: { message: `Address doesn't exist` } })
       })
     })
@@ -100,12 +99,12 @@ describe('Address Endpoints', function() {
           })
       })
 
-      it(`responds with 200 and the specific address`, () => {
-        const addressId = 2
-        const expectedAddress = testAddress[addressId - 1]
+      it(`responds with 200 and the specific user addresses`, () => {
+        const userId = 1
+        const expectedAddress = testAddress[userId - 1]
         return supertest(app)
-          .get(`/api/address/${addressId}`)
-          .set('Authorization', makeAuthHeader(testUsers[0]))
+          .get(`/api/address/${userId}`)
+          .set('Authorization', fixtures.makeAuthHeader(testUsers[0]))
           .expect(200, expectedAddress)
       })
     })
@@ -122,8 +121,8 @@ describe('Address Endpoints', function() {
 
     it(`creates an address, responding with 201 and the new address`, () => {
       const newAddress = {
-        from_date: '2010-01-01T08:00:00.000Z',
-        to_date: '2012-06-20T07:00:00.000Z',
+        from_date: '2010-01-01T00:00:00.000Z',
+        to_date: '2012-06-20T00:00:00.000Z',
         street_address: '123 Test Blvd',
         unit: null,
         city: 'Testville',
@@ -161,7 +160,7 @@ describe('Address Endpoints', function() {
 
     requiredFields.forEach(field => {
       const newAddress = {
-        from_date: '2010-01-01T08:00:00.000Z',
+        from_date: '2010-01-01T00:00:00.000Z',
         street_address: '123 Test St',
         city: 'Testville',
         abb_state: 'KY',
