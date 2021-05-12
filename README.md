@@ -29,10 +29,10 @@ This project was created using:
 ## Screenshots of Associated React App
 
 ### Landing Page
-![Landing Page Header](screenshots/landing-page.png)
+![Landing Page Header](/src/screenshots/landing-page.png)
 
 ### Login Page
-![View Posts](screenshots/login.png)
+![View Posts](/src/screenshots/login.png)
 
 ### Dashboard / Timeline
-![View Single Post](screenshots/timeline.png)
+![View Single Post](/src/screenshots/timeline.png)
