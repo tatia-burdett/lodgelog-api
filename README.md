@@ -22,7 +22,7 @@ This project was created using:
 * POST - /api/login
 * POST - /api/refresh
 * GET & POST - /api/address
-* GET - /api/user/:userid
+* GET - /api/address/user/:userid
   - gets all addresses for specified user ID
 * GET & DELETE & PATCH  - /api/address/:id
 
