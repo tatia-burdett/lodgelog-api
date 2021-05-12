@@ -1,26 +1,38 @@
-# Express Boilerplate!
+# LodgeLog API
 
-This is a boilerplate project used for starting new projects!
+## Summary:
 
-## Set up
+This server-side project was built along with a client-side React app, which can be viewed [here](https://github.com/tatia-burdett/lodgelog-app). The app was deployed through Heroku. 
 
-Complete the following steps to start a new project (NEW-PROJECT-NAME):
+## Tech Details:
 
-1. Clone this repository to your local machine `git clone BOILERPLATE-URL NEW-PROJECTS-NAME`
-2. `cd` into the cloned repository
-3. Make a fresh start of the git history for this project with `rm -rf .git && git init`
-4. Install the node dependencies `npm install`
-5. Move the example Environment file to `.env` that will be ignored by git and read by the express server `mv example.env .env`
-6. Edit the contents of the `package.json` to use NEW-PROJECT-NAME instead of `"name": "express-boilerplate",`
+This project was created using: 
+* Node.js
+* Express
+* PostgreSQL
 
-## Scripts
+## See it live:
 
-Start the application `npm start`
+[Live link](https://lodgelog-app-tatia-burdett.vercel.app/)
 
-Start nodemon for the application `npm run dev`
+## REST API - Endpoints
 
-Run the tests `npm test`
+* GET & POST - /api/user
+* DELETE - /api/user/:id
+* POST - /api/login
+* POST - /api/refresh
+* GET & POST - /api/address
+* GET - /api/user/:userid
+  - gets all addresses for specified user ID
+* GET & DELETE & PATCH  - /api/address/:id
 
-## Deploying
+## Screenshots of Associated React App
 
-When your new project is ready for deployment, add a new Heroku application with `heroku create`. This will make a new git remote called "heroku" and you can then `npm run deploy` which will push to this remote's main branch.
+### Landing Page
+![Landing Page Header](screenshots/landing-page.png)
+
+### Login Page
+![View Posts](screenshots/login.png)
+
+### Dashboard / Timeline
+![View Single Post](screenshots/timeline.png)
